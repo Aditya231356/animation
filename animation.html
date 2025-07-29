@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Hindu Temple</title>
+    <style>
+        :root {
+            --sky-start: #87ceeb;
+            --sky-end: #e0f7fa;
+            --background-end: #fff;
+            --garden-color: #2e7d32;
+            --gate-color: #5d4037;
+            --border-color: #3e2723;
+            --shivling-color: #000;
+            --aarti-color: #ff9800;
+            --ghanta-color: #ffd700;
+            --diya-color: #ff5722;
+            --flower-opacity: 0.9;
+            --animation-duration: 20s;
+            --cloud-size: 120px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, var(--sky-start), var(--background-end));
+            height: 100vh;
+            perspective: 1000px;
+            animation: skyColorChange var(--animation-duration) infinite alternate;
+        }
+
+        @keyframes skyColorChange {
+            0%, 100% { background: linear-gradient(to bottom, var(--sky-start), var(--background-end)); }
+            50% { background: linear-gradient(to bottom, #64b5f6, var(--background-end)); }
+        }
+
+        .sky {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 40%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .clouds {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            height: 100px;
+            background: url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/98a99da8-9201-4d51-abcd-4df101eac6a5.png') repeat-x;
+            background-size: var(--cloud-size) 100%;
+            animation: cloudMove linear 60s infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes cloudMove {
+            0% { background-position: 0 0; }
+            100% { background-position: -1200px 0; }
+        }
+
+        .sun {
+            position: absolute;
+            top: 15%;
+            left: 80%;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ffeb3b, #ffc107);
+            border-radius: 50%;
+            box-shadow: 0 0 40px #ffeb3b;
+            animation: sunRiseSet var(--animation-duration) ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes sunRiseSet {
+            0%, 100% { transform: translateY(50px); opacity: 0.5; }
+            50% { transform: translateY(0); opacity: 1; }
+        }
+
+        .landscape {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            z-index: -1;
+            background: linear-gradient(to top, #8bc34a, #689f38);
+            clip-path: polygon(0 40%, 100% 20%, 100% 100%, 0% 100%);
+            animation: landscapeColorChange var(--animation-duration) infinite alternate;
+        }
+
+        @keyframes landscapeColorChange {
+            0%, 100% { 
+                background: linear-gradient(to top, #8bc34a, #689f38); 
+                clip-path: polygon(0 40%, 100% 20%, 100% 100%, 0% 100%);
+            }
+            50% { 
+                background: linear-gradient(to top, #7cb342, #558b2f); 
+                clip-path: polygon(0 35%, 100% 15%, 100% 100%, 0% 100%);
+            }
+        }
+
+        .mandir-container {
+            position: relative;
+            max-width: 600px;
+            margin: 100px auto 0;
+            text-align: center;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .mandir-img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            filter: drop-shadow(0 10px 5px rgba(0,0,0,0.2));
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        .gate-overlay {
+            position: absolute;
+            display: block;
+            top: 55%;
+            left: 46%;
+            width: 70px;
+            height: 100px;
+            background: linear-gradient(to right, var(--gate-color), #8d6e63);
+            border: 3px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 1s ease, box-shadow 1s ease;
+            transform-origin: left;
+            z-index: 1;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.4);
+        }
+
+        .gate-overlay:hover {
+            box-shadow: 5px 0 20px rgba(255,215,0,0.5);
+        }
+
+        .gate-checkbox {
+            display: none;
+        }
+
+        .gate-checkbox:checked + .gate-overlay {
+            transform: rotateY(140deg);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+        }
+
+        .gate-checkbox:checked ~ .inside-temple {
+            display: block;
+        }
+
+        .gate-checkbox:checked ~ .flower-rain {
+            animation-play-state: paused;
+        }
+
+        .inside-temple {
+            display: none;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 20px;
+            border-radius: 10px;
+            width: 200px;
+            box-shadow: 0 0 30px rgba(255,215,0,0.3);
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .temple-elements {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .shivling {
+            width: 40px;
+            height: 70px;
+            background: linear-gradient(to bottom, var(--shivling-color), #333);
+            border-radius: 50% 50% 0 0;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        .shivling:before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 15px;
+            background: silver;
+            border-radius: 50%;
+        }
+
+        .aarti {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--aarti-color);
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            animation: spin 3s linear infinite;
+        }
+
+        .aarti:before {
+            content: '🔥';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            animation: flame 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes flame {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            100% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .ghanta {
+            width: 30px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--ghanta-color), #c9b037);
+            border-radius: 25px 25px 5px 5px;
+            margin: 0 auto;
+            position: relative;
+            animation: swing 2s ease-in-out infinite alternate;
+        }
+
+        .ghanta:before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #5d4037;
+            border-radius: 50%;
+        }
+
+        @keyframes swing {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+
+        .diya-container {
+            position: relative;
+            width: 30px;
+            height: 40px;
+            margin: 0 auto;
+        }
+
+        .diya {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            background: #8d6e63;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .diya-flame {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 15px;
+            background: #ff5722;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px #ff9800, 0 0 20px #ffc107;
+            animation: flicker 0.5s ease-in-out infinite alternate,
+                       flameGrow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%, 100% { transform: translateX(-50%) skewX(0deg); height: 15px; }
+            50% { transform: translateX(-50%) skewX(5deg); height: 20px; }
+        }
+
+        @keyframes flameGrow {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .flower-rain {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .flower-rain span {
+            position: absolute;
+            font-size: 24px;
+            animation: fall linear infinite;
+            opacity: var(--flower-opacity);
+        }
+
+        .flower-rain span:nth-child(1) { 
+            left: 5%; 
+            animation-duration: 12s; 
+            animation-delay: 0s;
+            color: #ff4081;
+        }
+        .flower-rain span:nth-child(2) { 
+            left: 25%; 
+            animation-duration: 14s; 
+            animation-delay: 2s;
+            color: #e91e63;
+        }
+        .flower-rain span:nth-child(3) { 
+            left: 45%; 
+            animation-duration: 16s; 
+            animation-delay: 4s;
+            color: #c2185b;
+        }
+        .flower-rain span:nth-child(4) { 
+            left: 65%; 
+            animation-duration: 10s; 
+            animation-delay: 1s;
+            color: #9c27b0;
+        }
+        .flower-rain span:nth-child(5) { 
+            left: 85%; 
+            animation-duration: 18s; 
+            animation-delay: 3s;
+            color: #673ab7;
+        }
+
+        @keyframes fall {
+            0% { 
+                top: -10%; 
+                transform: rotate(0deg) translateX(10px);
+            }
+            20% {
+                transform: rotate(60deg) translateX(-5px);
+            }
+            40% { 
+                transform: rotate(120deg) translateX(5px);
+            }
+            60% {
+                transform: rotate(180deg) translateX(-5px);
+            }
+            80% {
+                transform: rotate(240deg) translateX(5px);
+            }
+            100% { 
+                top: 110%; 
+                transform: rotate(360deg) translateX(-10px);
+            }
+        }
+
+        .blessing-message {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            animation: messageAppear 5s ease 2s forwards;
+        }
+
+        @keyframes messageAppear {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+
+        @media (max-width: 600px) {
+            .mandir-container {
+                max-width: 90%;
+                margin: 50px auto 0;
+            }
+            
+            .gate-overlay {
+                width: 50px;
+                height: 80px;
+                left: 45%;
+                top: 50%;
+            }
+            
+            .inside-temple {
+                width: 150px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sky">
+        <div class="clouds"></div>
+        <div class="sun"></div>
+    </div>
+    
+    <div class="landscape"></div>
+    
+    <div class="mandir-container">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a4171942-0509-4c68-8b7b-2eb61d59a10d.png" alt="Ancient Hindu temple with intricate carvings and tall spires" class="mandir-img">
+        
+        <input type="checkbox" id="gate-toggle" class="gate-checkbox">
+        <label for="gate-toggle" class="gate-overlay"></label>
+        
+        <div class="inside-temple">
+            <h3>Welcome to the Temple</h3>
+            <div class="temple-elements">
+                <div class="shivling"></div>
+                <div class="aarti"></div>
+                <div class="ghanta"></div>
+                <div class="diya-container">
+                    <div class="diya-flame"></div>
+                    <div class="diya"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flower-rain">
+        <span>🌸</span>
+        <span>🌺</span>
+        <span>🌼</span>
+        <span>🌹</span>
+        <span>🌻</span>
+    </div>
+    
+    <div class="blessing-message">May the divine blessings be with you</div>
+</body>
+</html>
