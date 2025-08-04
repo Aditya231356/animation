@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flex Behaviour Friends</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #0f0f0f;
+      color: #fff;
+    }
+
+    nav {
+      background: #1e1e1e;
+      padding: 15px 30px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #73a529;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: #c8ff7e;
+    }
+
+    .scroll-text {
+      margin-top: 20px;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      background: #2a2a2a;
+      padding: 10px 0;
+    }
+
+    .scroll-text span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll-left 18s linear infinite;
+    }
+
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .scroll-text p {
+      display: inline;
+      color: #f0f0f0;
+      font-size: 16px;
+    }
+
+    /* Middle Animated Section */
+    .middle-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .animated-card {
+      background-color: #1f1f1f;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 255, 100, 0.2);
+      text-align: center;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .animated-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 30px rgba(115, 165, 41, 0.6);
+      animation: bounce 0.8s;
+    }
+
+    .animated-card h2 {
+      color: #c8ff7e;
+      margin-bottom: 10px;
+    }
+
+    .animated-card p {
+      color: #ddd;
+      font-size: 16px;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes bounce {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.1); }
+      50%  { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+    <div class="home">
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#view">View</a></li>
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#login">Login</a></li>
+    </ul>
+  </nav>
+</div>
+  <div class="scroll-text">
+    <span>
+      <p>Hello! Welcome to the page of Flex Behaviour Friends. Flexbox helps align navbar items horizontally. HTML elements are either block (like div, p) or inline (like span, img).</p>
+    </span>
+  </div>
+
+  <!-- Middle Animated Section -->
+  <div class="middle-section" id="view">
+    <div class="animated-card">
+      <h2>Flexbox is Powerful!</h2>
+      <p>It allows you to align, justify, and organize content like a pro.</p>
+    </div>
+  </div>
+</body>
+</html>
